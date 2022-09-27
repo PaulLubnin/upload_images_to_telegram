@@ -1,7 +1,15 @@
 import random
+from os.path import splitext
 from pathlib import Path
+from urllib.parse import urlsplit, unquote
 
 import requests
+
+
+def get_file_extension(url: str):
+    """Функция вытаскивает из урла расширение файла"""
+
+    return splitext(urlsplit(unquote(url).replace(' ', '_'))[2])[1]
 
 
 def get_all_image_links(link_source: str):
@@ -10,6 +18,7 @@ def get_all_image_links(link_source: str):
     all_launch_photos = []
     response = requests.get(link_source)
     response.raise_for_status()
+
     for launch in response.json():
         if launch['links']['flickr']['original']:
             one_launch = {
@@ -21,7 +30,7 @@ def get_all_image_links(link_source: str):
     return all_launch_photos
 
 
-def get_and_save_images(array: list):
+def fetch_spacex_random_launch(array: list):
     """Функция выбирает случайным образом один запуск, затем создает и сохраняет папку с картинками запуска. """
 
     one_launch = random.choice(array)
@@ -31,10 +40,13 @@ def get_and_save_images(array: list):
     for link_number, link in enumerate(one_launch['links_image'], 1):
         response = requests.get(link)
         response.raise_for_status()
-        with open(f'{image_directory}/space_{link_number}.jpg', 'wb') as file:
+        file_extension = get_file_extension(link)
+        with open(f'{image_directory}/space_{link_number}{file_extension}', 'wb') as file:
             file.write(response.content)
+
+    print(f'Фотографии сохранены в папку {image_directory}')
 
 
 if __name__ == '__main__':
     api_spacex = 'https://api.spacexdata.com/v5/launches/'
-    get_and_save_images(get_all_image_links(api_spacex))
+    fetch_spacex_random_launch(get_all_image_links(api_spacex))
