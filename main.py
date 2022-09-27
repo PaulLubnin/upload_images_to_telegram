@@ -1,5 +1,5 @@
+import random
 from pathlib import Path
-from pprint import pprint
 
 import requests
 
@@ -7,37 +7,34 @@ import requests
 def get_all_image_links(link_source: str):
     """Функция вытаскивает ссылки на картинки. Возвращает список словарей с 'id_launch' и 'links_image'."""
 
-    pictures_links = []
+    all_launch_photos = []
     response = requests.get(link_source)
     response.raise_for_status()
-    for elem in response.json():
-        if elem['links']['flickr']['original']:
+    for launch in response.json():
+        if launch['links']['flickr']['original']:
             one_launch = {
-                'id_launch': elem['id'],
-                'links_image': elem['links']['flickr']['original']
+                'id_launch': launch['id'],
+                'links_image': launch['links']['flickr']['original']
             }
-            pictures_links.append(one_launch)
+            all_launch_photos.append(one_launch)
 
-    return pictures_links
-
-
-def get_image(url: str):
-    """Функция делает запрос на получение картинки по заданному урлу."""
-
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.content
+    return all_launch_photos
 
 
-def save_image(directory_name: str, image_title: str, saved_image: bytes, ):
-    """Функция создает папку в проекте и сохраняет в неё картинку."""
+def get_and_save_images(array: list):
+    """Функция выбирает случайным образом один запуск, затем создает и сохраняет папку с картинками запуска. """
 
-    image_directory = Path.cwd().joinpath(directory_name)
+    one_launch = random.choice(array)
+    image_directory = Path.cwd().joinpath(f"image/{one_launch['id_launch']}")
     Path(image_directory).mkdir(parents=True, exist_ok=True)
-    with open(f'{image_directory}/{image_title}', 'wb') as file:
-        file.write(saved_image)
+
+    for link_number, link in enumerate(one_launch['links_image'], 1):
+        response = requests.get(link)
+        response.raise_for_status()
+        with open(f'{image_directory}/space_{link_number}.jpg', 'wb') as file:
+            file.write(response.content)
 
 
 if __name__ == '__main__':
     api_spacex = 'https://api.spacexdata.com/v5/launches/'
-    pprint(get_all_image_links(api_spacex))
+    get_and_save_images(get_all_image_links(api_spacex))
