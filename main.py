@@ -1,13 +1,30 @@
 from pathlib import Path
+from pprint import pprint
 
 import requests
+
+
+def get_all_image_links(link_source: str):
+    """Функция вытаскивает ссылки на картинки. Возвращает список словарей с 'id_launch' и 'links_image'."""
+
+    pictures_links = []
+    response = requests.get(link_source)
+    response.raise_for_status()
+    for elem in response.json():
+        if elem['links']['flickr']['original']:
+            one_launch = {
+                'id_launch': elem['id'],
+                'links_image': elem['links']['flickr']['original']
+            }
+            pictures_links.append(one_launch)
+
+    return pictures_links
 
 
 def get_image(url: str):
     """Функция делает запрос на получение картинки по заданному урлу."""
 
-    headers = {'User-Agent': 'CoolBot/0.0 (https://example.org/coolbot/; coolbot@example.org)'}
-    response = requests.get(url, headers=headers)
+    response = requests.get(url)
     response.raise_for_status()
     return response.content
 
@@ -22,7 +39,5 @@ def save_image(directory_name: str, image_title: str, saved_image: bytes, ):
 
 
 if __name__ == '__main__':
-    url_image = 'https://upload.wikimedia.org/wikipedia/commons/3/3f/HST-SM4.jpeg'
-    image = get_image(url_image)
-    filename = 'hubble.jpeg'
-    save_image('image', filename, image)
+    api_spacex = 'https://api.spacexdata.com/v5/launches/'
+    pprint(get_all_image_links(api_spacex))
