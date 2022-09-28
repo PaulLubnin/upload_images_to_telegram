@@ -2,6 +2,7 @@ import random
 from datetime import datetime
 from os.path import splitext
 from pathlib import Path
+from pprint import pprint
 from urllib.parse import urlsplit, unquote
 
 import requests
@@ -11,13 +12,7 @@ env = Env()
 env.read_env()
 
 
-def get_file_extension(url: str):
-    """Функция вытаскивает из урла расширение файла"""
-
-    return splitext(urlsplit(unquote(url).replace(' ', '_'))[2])[1]
-
-
-def get_links_nasa_images() -> list:
+def get_links_nasa_apod() -> list:
     """Функция получает ссылки на фотографии дня c сайта NASA.
     Возвращает список словарей с 'image_url' и 'date'."""
 
@@ -31,7 +26,6 @@ def get_links_nasa_images() -> list:
     response.raise_for_status()
 
     for apod in response.json():
-        # print(apod)
         one_apod = {
             'date': apod['date'],
             'image_url': apod['url']
@@ -39,6 +33,33 @@ def get_links_nasa_images() -> list:
         all_apod.append(one_apod)
 
     return all_apod
+
+
+def get_links_nasa_epic() -> list:
+    """Функция получает ссылки на фотографии дня c сайта NASA.
+    Возвращает список словарей с 'image_url' и 'date'."""
+
+    all_epic = []
+    api_nasa = 'https://epic.gsfc.nasa.gov/api/natural'
+    params = {
+        'api_key': env('API_KEY'),
+    }
+    response = requests.get(api_nasa, params=params)
+    response.raise_for_status()
+
+    for epic in response.json():
+        one_epic = {
+            'image_name': epic['image'],
+            'date': datetime.fromisoformat(epic['date']).strftime('%Y-%m-%d'),
+            'image_url': f'https://epic.gsfc.nasa.gov/archive/natural/'
+                         f'{datetime.fromisoformat(epic["date"]).strftime("%Y")}/'
+                         f'{datetime.fromisoformat(epic["date"]).strftime("%m")}/'
+                         f'{datetime.fromisoformat(epic["date"]).strftime("%d")}/'
+                         f'png/{epic["image"]}.png'
+        }
+        all_epic.append(one_epic)
+
+    return all_epic
 
 
 def get_links_spacex_launch_images() -> list:
@@ -60,6 +81,12 @@ def get_links_spacex_launch_images() -> list:
             all_launch_photos.append(one_launch)
 
     return all_launch_photos
+
+
+def get_file_extension(url: str):
+    """Функция вытаскивает из урла расширение файла"""
+
+    return splitext(urlsplit(unquote(url).replace(' ', '_'))[2])[1]
 
 
 def images_directory(path: str):
@@ -84,7 +111,7 @@ def save_image(array: list):
                 file.write(response.content)
         print('Фотографии запуска ракет сохранены в папку "images/spacex"')
     else:
-        for elem_number, elem in enumerate(array):
+        for elem_number, elem in enumerate(array, 1):
             response = requests.get(elem['image_url'])
             response.raise_for_status()
             file_extension = get_file_extension(elem['image_url'])
@@ -95,5 +122,6 @@ def save_image(array: list):
 
 
 if __name__ == '__main__':
-    save_image(get_links_spacex_launch_images())
-    save_image(get_links_nasa_images())
+    # save_image(get_links_spacex_launch_images())
+    # save_image(get_links_nasa_apod())
+    save_image(get_links_nasa_epic())
