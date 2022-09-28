@@ -115,9 +115,14 @@ def save_image(array: list):
             response = requests.get(elem['image_url'])
             response.raise_for_status()
             file_extension = get_file_extension(elem['image_url'])
-            path = 'images/nasa'
-            with open(f'{images_directory(path)}/apod_{elem_number}_{elem["date"]}{file_extension}', 'wb') as file:
-                file.write(response.content)
+            if not elem.get('image_name'):
+                path = 'images/nasa/apod'
+                with open(f'{images_directory(path)}/apod_{elem_number}_{elem["date"]}{file_extension}', 'wb') as file:
+                    file.write(response.content)
+            else:
+                path = 'images/nasa/epic'
+                with open(f'{images_directory(path)}/epic_{elem_number}_{elem["date"]}{file_extension}', 'wb') as file:
+                    file.write(response.content)
         print('Фотографии дня сохранены в папку "images/nasa"')
 
 
