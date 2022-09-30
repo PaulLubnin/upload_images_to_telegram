@@ -1,5 +1,4 @@
 import argparse
-import random
 from os.path import splitext
 from pathlib import Path
 from urllib.parse import urlsplit, unquote
@@ -11,7 +10,7 @@ from load_epic import get_links_nasa_epic
 from load_spacex import get_links_spacex_launch_images
 
 
-def get_file_extension(url: str):
+def get_file_extension(url: str) -> str:
     """Функция вытаскивает из урла расширение файла"""
 
     return splitext(urlsplit(unquote(url).replace(' ', '_'))[2])[1]
@@ -25,13 +24,12 @@ def images_directory(path: str):
     return directory
 
 
-def save_image(array: list):
+def save_image(array: dict or list):
     """Функция сохраняет картинки."""
 
-    if array[0].get('id_launch'):
-        one_launch = random.choice(array)
-        path = f'images/spacex/{one_launch["date"]}'
-        for link_number, link in enumerate(one_launch['image_url'], 1):
+    if array is dict:
+        path = f'images/spacex/{array["date"]}'
+        for link_number, link in enumerate(array['image_url'], 1):
             response = requests.get(link)
             response.raise_for_status()
             file_extension = get_file_extension(link)
@@ -66,9 +64,9 @@ def main():
     parser.add_argument('-id', '--id_launch', type=str, default='random',
                         help='ID SpaceX launch')
     parser.add_argument('-qa', '--quantity_apod', type=int, default=30,
-                        help='Quantity of APOD photos uploaded')
-    parser.add_argument('-qe', '--quantity_epic', type=int, default=10,
-                        help='Quantity of EPIC photos uploaded')
+                        help='Quantity of APOD photos uploaded. Max 50 photo.')
+    parser.add_argument('-qe', '--quantity_epic', type=int, default=None,
+                        help='Quantity of EPIC photos uploaded. Max 12 photo.')
     args = parser.parse_args()
 
     if args.source == 'nothing':
@@ -77,19 +75,21 @@ def main():
     elif args.source == 'apod' and args.quantity_apod == 30:
         print('Uploading 30 APOD photos')
         save_image(get_links_nasa_apod())
-    elif args.source == 'apod' and args.quantity_apod:
+    elif args.source == 'apod' and 50 >= args.quantity_apod >= 1:
         print(f'Uploading {args.quantity_apod} APOD photos')
         save_image(get_links_nasa_apod(args.quantity_apod))
+    elif args.source == 'apod' and args.quantity_apod > 50:
+        print('You can upload up to 100 photos at one time.')
 
-    # TODO поправить загрузку, чтобы загружалась определенное количество фотографий
-    elif args.source == 'epic' and args.quantity_epic == 10:
-        print('Uploading 30 EPIC photos')
+    elif args.source == 'epic' and args.quantity_epic is None:
+        print('Uploading EPIC photos')
         save_image(get_links_nasa_epic())
-    elif args.source == 'epic' and args.quantity_epic:
+    elif args.source == 'epic' and 12 >= args.quantity_epic >= 1:
         print(f'Uploading {args.quantity_epic} EPIC photos')
         save_image(get_links_nasa_epic(args.quantity_epic))
+    elif args.source == 'epic' and args.quantity_epic > 12:
+        print('You can upload up to 12 photos at one time')
 
-    # TODO сделать чтобы загружались фотографии по ID или рандомный вариант
     elif args.source == 'spacex' and args.id_launch == 'random':
         print('Uploading photos random SpaceX launch')
         save_image(get_links_spacex_launch_images())

@@ -1,15 +1,14 @@
+import random
 from datetime import datetime
 
 import requests
-
 from environs import Env
 
 env = Env()
 env.read_env()
 
 
-# TODO поправить загрузку, чтобы загружалась определенное количество фотографий
-def get_links_nasa_epic(quantity_epic=10) -> list:
+def get_links_nasa_epic(quantity_epic: int = None) -> list:
     """Функция получает ссылки на фотографии EPIC c сайта NASA.
     Возвращает список словарей с 'image_url' и 'date'."""
 
@@ -33,4 +32,6 @@ def get_links_nasa_epic(quantity_epic=10) -> list:
         }
         all_epic.append(one_epic)
 
-    return all_epic
+    if not quantity_epic:
+        return all_epic
+    return random.sample(all_epic, quantity_epic)

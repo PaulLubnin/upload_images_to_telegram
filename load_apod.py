@@ -6,7 +6,7 @@ env = Env()
 env.read_env()
 
 
-def get_links_nasa_apod(quantity_apod=30) -> list:
+def get_links_nasa_apod(quantity_apod: int = 30) -> list:
     """Функция получает ссылки на фотографии APOD c сайта NASA.
     Возвращает список словарей с 'image_url' и 'date'."""
 
