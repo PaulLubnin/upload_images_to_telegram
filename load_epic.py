@@ -4,6 +4,8 @@ from datetime import datetime
 import requests
 from environs import Env
 
+import photo_upload
+
 env = Env()
 env.read_env()
 
@@ -35,3 +37,7 @@ def get_links_nasa_epic(quantity_epic: int = None) -> list:
     if not quantity_epic:
         return all_epic
     return random.sample(all_epic, quantity_epic)
+
+
+if __name__ == '__main__':
+    photo_upload.main_epic()

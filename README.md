@@ -1,8 +1,7 @@
 # Загрузка фотографий в телеграм чат
-
 Набор скриптов для скачивания фотографии с сайтов NASA и SpaceX, и публикации в телеграм канал.
-### Как установить
 
+### Как установить:
 Python3 должен быть уже установлен. 
 Затем используйте `pip` (или `pip3`, есть конфликт с Python2) для установки зависимостей:
 ```
@@ -14,11 +13,21 @@ API_KEY=<api_key>
 TG_BOT_TOKEN=<tg_bot_token>
 TG_CHAT_ID=<tg_chat_id>
 ```
-Для загрузки фотографий воспользуйтесь командой:
+
+### Как запустить:
+- Для загрузки APOD, где QUANTITY_APOD количество фотографий, не более 50 за раз:
 ```
-python photo_upload.py [-h] [-s {spacex,apod,epic}] [-id ID_LAUNCH] [-qa QUANTITY_APOD] [-qe QUANTITY_EPIC]
+python load_apod.py -qa [QUANTITY_APOD]
 ```
-Для публикации фотографий воспользуйтесь командой:
+- Для загрузки EPIC, где QUANTITY_EPIC количество фотографий, не более 12 за раз:
 ```
-python start_publishing.py [-h] [-p PERIODICITY]
+python load_epic.py -qe [QUANTITY_EPIC]
+```
+- Для загрузки SPACEX, где ID_LAUNCH идентификатор пуска, например `6243adcaaf52800c6e919254`, без идентификатора загружается случайный пуск:
+```
+python load_spacex.py -id [ID_LAUNCH]
+```
+- Для публикации, где PERIODICITY интервал публикации:
+```
+python start_publishing.py -p [PERIODICITY]
 ```

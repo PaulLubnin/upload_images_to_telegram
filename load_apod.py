@@ -1,6 +1,7 @@
 import requests
-
 from environs import Env
+
+import photo_upload
 
 env = Env()
 env.read_env()
@@ -27,3 +28,7 @@ def get_links_nasa_apod(quantity_apod: int = 30) -> list:
         all_apod.append(one_apod)
 
     return all_apod
+
+
+if __name__ == '__main__':
+    photo_upload.main_apod()

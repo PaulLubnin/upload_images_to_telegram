@@ -3,6 +3,8 @@ from datetime import datetime
 
 import requests
 
+import photo_upload
+
 
 def get_links_spacex_launch_images(id_launch: str = None) -> dict:
     """Функция вытаскивает ссылки на картинки c сайта SpaceX,
@@ -35,5 +37,8 @@ def get_links_spacex_launch_images(id_launch: str = None) -> dict:
                 'image_url': response.json()['links']['flickr']['original']
             }
             selected_launch = one_launch
-
     return selected_launch
+
+
+if __name__ == '__main__':
+    photo_upload.main_spacex()

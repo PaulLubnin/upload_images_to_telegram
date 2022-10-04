@@ -5,9 +5,9 @@ from urllib.parse import urlsplit, unquote
 
 import requests
 
-from load_apod import get_links_nasa_apod
-from load_epic import get_links_nasa_epic
-from load_spacex import get_links_spacex_launch_images
+import load_apod
+import load_epic
+import load_spacex
 
 
 def get_file_extension(url: str) -> str:
@@ -52,54 +52,68 @@ def save_image(array: dict or list):
         print('NASA photos saved in "images/nasa" folder')
 
 
-def main():
-    """Функция запуска программы из командной строки."""
+def main_apod():
+    """Функция запуска скрипта из командной строки."""
 
     parser = argparse.ArgumentParser(
-        prog='photo_upload.py',
+        prog='load_apod.py',
         description='Loading images from the selected source.'
     )
-    parser.add_argument('-s', '--source', choices=['spacex', 'apod', 'epic'], default='nothing', type=str,
-                        help='Sources: "spacex", "apod", "epic".')
-    parser.add_argument('-id', '--id_launch', type=str, default='random',
-                        help='ID SpaceX launch')
     parser.add_argument('-qa', '--quantity_apod', type=int, default=30,
                         help='Quantity of APOD photos uploaded. Max 50 photo.')
-    parser.add_argument('-qe', '--quantity_epic', type=int, default=None,
-                        help='Quantity of EPIC photos uploaded. Max 12 photo.')
     args = parser.parse_args()
 
-    if args.source == 'nothing':
-        print('You must specify the source. It can be either "spacex" or "apod" or "epic".')
-
-    elif args.source == 'apod' and args.quantity_apod == 30:
+    if args.quantity_apod == 30:
         print('Uploading 30 APOD photos')
-        save_image(get_links_nasa_apod())
-    elif args.source == 'apod' and 50 >= args.quantity_apod >= 1:
+        save_image(load_apod.get_links_nasa_apod())
+    elif 50 >= args.quantity_apod >= 1:
         print(f'Uploading {args.quantity_apod} APOD photos')
-        save_image(get_links_nasa_apod(args.quantity_apod))
-    elif args.source == 'apod' and args.quantity_apod > 50:
-        print('You can upload up to 100 photos at one time.')
-
-    elif args.source == 'epic' and args.quantity_epic is None:
-        print('Uploading EPIC photos')
-        save_image(get_links_nasa_epic())
-    elif args.source == 'epic' and 12 >= args.quantity_epic >= 1:
-        print(f'Uploading {args.quantity_epic} EPIC photos')
-        save_image(get_links_nasa_epic(args.quantity_epic))
-    elif args.source == 'epic' and args.quantity_epic > 12:
-        print('You can upload up to 12 photos at one time')
-
-    elif args.source == 'spacex' and args.id_launch == 'random':
-        print('Uploading photos random SpaceX launch')
-        save_image(get_links_spacex_launch_images())
-    elif args.source == 'spacex' and args.id_launch:
-        print(f'Uploading photos SpaceX launch - {args.id_launch}')
-        save_image(get_links_spacex_launch_images(args.id_launch))
-
+        save_image(load_apod.get_links_nasa_apod(args.quantity_apod))
+    elif args.quantity_apod > 50:
+        print('You can upload up to 50 photos at one time.')
     else:
         print('Unknown command.')
 
 
-if __name__ == '__main__':
-    main()
+def main_epic():
+    """Функция запуска скрипта из командной строки."""
+
+    parser = argparse.ArgumentParser(
+        prog='load_epic.py',
+        description='Loading images from the selected source.'
+    )
+    parser.add_argument('-qe', '--quantity_epic', type=int, default=None,
+                        help='Quantity of EPIC photos uploaded. Max 12 photo.')
+    args = parser.parse_args()
+
+    if args.quantity_epic is None:
+        print('Uploading EPIC photos')
+        save_image(load_epic.get_links_nasa_epic())
+    elif 12 >= args.quantity_epic >= 1:
+        print(f'Uploading {args.quantity_epic} EPIC photos')
+        save_image(load_epic.get_links_nasa_epic(args.quantity_epic))
+    elif args.quantity_epic > 12:
+        print('You can upload up to 12 photos at one time')
+    else:
+        print('Unknown command.')
+
+
+def main_spacex():
+    """Функция запуска скрипта из командной строки."""
+
+    parser = argparse.ArgumentParser(
+        prog='load_spacex.py',
+        description='Loading images from the selected source.'
+    )
+    parser.add_argument('-id', '--id_launch', type=str, default='random',
+                        help='ID SpaceX launch')
+    args = parser.parse_args()
+
+    if args.id_launch == 'random':
+        print('Uploading photos random SpaceX launch')
+        save_image(load_spacex.get_links_spacex_launch_images())
+    elif args.id_launch:
+        print(f'Uploading photos SpaceX launch - {args.id_launch}')
+        save_image(load_spacex.get_links_spacex_launch_images(args.id_launch))
+    else:
+        print('Unknown command.')
