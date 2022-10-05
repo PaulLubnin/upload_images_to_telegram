@@ -1,4 +1,6 @@
 import random
+import sys
+from datetime import datetime
 
 import requests
 
@@ -17,9 +19,9 @@ def get_random_launch_id() -> str:
     return random.choice(launch_ids)
 
 
-def get_links_spacex_launch_images(launch_id: str = None) -> list:
+def get_links_spacex_launch_images(launch_id: str = None) -> dict:
     """Функция вытаскивает ссылки на картинки c сайта SpaceX,
-     либо по заданному 'id', либо случайный вариант. Возвращает список из урлов."""
+     либо по заданному 'id', либо случайный вариант. Возвращает словарь с 'date' и 'image_url'."""
 
     api_spacex = f'https://api.spacexdata.com/v5/launches/{launch_id}' \
         if launch_id else f'https://api.spacexdata.com/v5/launches/{get_random_launch_id()}'
@@ -29,7 +31,10 @@ def get_links_spacex_launch_images(launch_id: str = None) -> list:
 
     if not launch['links']['flickr']['original']:
         print('Selected launch has no photos')
-    return launch['links']['flickr']['original']
+        sys.exit()
+    else:
+        return {'date': datetime.fromisoformat(launch['date_local']).strftime('%Y-%m-%d'),
+                'image_url': launch['links']['flickr']['original']}
 
 
 if __name__ == '__main__':

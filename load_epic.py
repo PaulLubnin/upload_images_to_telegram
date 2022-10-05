@@ -20,9 +20,9 @@ def get_links_nasa_epic(nasa_api_key, quantity_epic: int = None) -> list:
 
     for epic in response.json():
         one_epic = {
-            'image_name': epic['image'],
             'date': datetime.fromisoformat(epic['date']).strftime('%Y-%m-%d'),
-            'image_url': f'{api_nasa}/{datetime.fromisoformat(epic["date"]).strftime("%Y/%m/%d")}/png/{epic["image"]}.png'
+            'image_url': f'https://epic.gsfc.nasa.gov/archive/natural/'
+                         f'{datetime.fromisoformat(epic["date"]).strftime("%Y/%m/%d")}/png/{epic["image"]}.png'
         }
         all_epic.append(one_epic)
 
