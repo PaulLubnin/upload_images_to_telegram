@@ -19,9 +19,10 @@ def send_photo(tg_bot_token, tg_chat_id, publication_frequency: int = 14400):
 
     for address, dirs, files in tree_directories:
         for name in files:
-            bot.send_photo(chat_id=tg_chat_id,
-                           photo=open(os.path.join(address, name), 'rb'))
-            time.sleep(publication_frequency)
+            with open(os.path.join(address, name), 'rb') as image:
+                bot.send_photo(chat_id=tg_chat_id,
+                               photo=image)
+                time.sleep(publication_frequency)
 
 
 def main():
