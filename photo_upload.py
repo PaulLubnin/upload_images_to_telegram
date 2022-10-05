@@ -4,10 +4,14 @@ from pathlib import Path
 from urllib.parse import urlsplit, unquote
 
 import requests
+from environs import Env
 
 import load_apod
 import load_epic
 import load_spacex
+
+env = Env()
+env.read_env()
 
 
 def get_file_extension(url: str) -> str:
@@ -55,6 +59,8 @@ def save_image(array: dict or list):
 def main_apod():
     """Функция запуска скрипта из командной строки."""
 
+    nasa_api_key = env('NASA_API_KEY')
+
     parser = argparse.ArgumentParser(
         prog='load_apod.py',
         description='Loading images from the selected source.'
@@ -65,10 +71,10 @@ def main_apod():
 
     if args.quantity_apod == 30:
         print('Uploading 30 APOD photos')
-        save_image(load_apod.get_links_nasa_apod())
+        save_image(load_apod.get_links_nasa_apod(nasa_api_key))
     elif 50 >= args.quantity_apod >= 1:
         print(f'Uploading {args.quantity_apod} APOD photos')
-        save_image(load_apod.get_links_nasa_apod(args.quantity_apod))
+        save_image(load_apod.get_links_nasa_apod(nasa_api_key, args.quantity_apod))
     elif args.quantity_apod > 50:
         print('You can upload up to 50 photos at one time.')
     else:
@@ -77,6 +83,8 @@ def main_apod():
 
 def main_epic():
     """Функция запуска скрипта из командной строки."""
+
+    nasa_api_key = env('NASA_API_KEY')
 
     parser = argparse.ArgumentParser(
         prog='load_epic.py',
@@ -88,10 +96,10 @@ def main_epic():
 
     if args.quantity_epic is None:
         print('Uploading EPIC photos')
-        save_image(load_epic.get_links_nasa_epic())
+        save_image(load_epic.get_links_nasa_epic(nasa_api_key))
     elif 12 >= args.quantity_epic >= 1:
         print(f'Uploading {args.quantity_epic} EPIC photos')
-        save_image(load_epic.get_links_nasa_epic(args.quantity_epic))
+        save_image(load_epic.get_links_nasa_epic(nasa_api_key, args.quantity_epic))
     elif args.quantity_epic > 12:
         print('You can upload up to 12 photos at one time')
     else:

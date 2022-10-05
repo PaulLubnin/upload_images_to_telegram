@@ -2,22 +2,18 @@ import random
 from datetime import datetime
 
 import requests
-from environs import Env
 
 import photo_upload
 
-env = Env()
-env.read_env()
 
-
-def get_links_nasa_epic(quantity_epic: int = None) -> list:
+def get_links_nasa_epic(nasa_api_key, quantity_epic: int = None) -> list:
     """Функция получает ссылки на фотографии EPIC c сайта NASA.
     Возвращает список словарей с 'image_url' и 'date'."""
 
     all_epic = []
     api_nasa = 'https://epic.gsfc.nasa.gov/api/natural'
     params = {
-        'api_key': env('API_KEY'),
+        'api_key': nasa_api_key,
     }
     response = requests.get(api_nasa, params=params)
     response.raise_for_status()

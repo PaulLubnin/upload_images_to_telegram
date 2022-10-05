@@ -1,20 +1,16 @@
 import requests
-from environs import Env
 
 import photo_upload
 
-env = Env()
-env.read_env()
 
-
-def get_links_nasa_apod(quantity_apod: int = 30) -> list:
+def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
     """Функция получает ссылки на фотографии APOD c сайта NASA.
     Возвращает список словарей с 'image_url' и 'date'."""
 
     all_apod = []
     api_nasa = 'https://api.nasa.gov/planetary/apod'
     params = {
-        'api_key': env('API_KEY'),
+        'api_key': nasa_api_key,
         'count': quantity_apod
     }
     response = requests.get(api_nasa, params=params)

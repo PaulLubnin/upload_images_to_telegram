@@ -9,7 +9,7 @@ pip install -r requirements.txt
 ```
 Необходимо создать файл с секретными данными - `.env`
 ```
-API_KEY=<api_key>
+NASA_API_KEY=<nasa_api_key>
 TG_BOT_TOKEN=<tg_bot_token>
 TG_CHAT_ID=<tg_chat_id>
 ```

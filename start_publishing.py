@@ -10,11 +10,8 @@ env = Env()
 env.read_env()
 
 
-def send_photo(publication_frequency: int = 14400):
+def send_photo(tg_bot_token, tg_chat_id, publication_frequency: int = 14400):
     """Функция отправляет фотографии в чат."""
-
-    tg_bot_token = env('TG_BOT_TOKEN')
-    chat_id = env('TG_CHAT_ID')
 
     bot = telegram.Bot(token=tg_bot_token)
     directory = Path.cwd().joinpath('images')
@@ -22,13 +19,16 @@ def send_photo(publication_frequency: int = 14400):
 
     for address, dirs, files in tree_directories:
         for name in files:
-            bot.send_photo(chat_id=chat_id,
+            bot.send_photo(chat_id=tg_chat_id,
                            photo=open(os.path.join(address, name), 'rb'))
             time.sleep(publication_frequency)
 
 
 def main():
     """Функция запуска бота из командной строки."""
+
+    tg_bot_token = env('TG_BOT_TOKEN')
+    tg_chat_id = env('TG_CHAT_ID')
 
     parser = argparse.ArgumentParser(
         prog='start_publishing.py',
@@ -40,11 +40,11 @@ def main():
 
     if args.periodicity == 14400:
         print(f'Photos are posted every 4 hours')
-        send_photo()
+        send_photo(tg_bot_token, tg_chat_id)
 
     else:
         print(f'Photos are posted every {args.periodicity} seconds.')
-        send_photo(args.periodicity)
+        send_photo(tg_bot_token, tg_chat_id, args.periodicity)
 
 
 if __name__ == '__main__':
