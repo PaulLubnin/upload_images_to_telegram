@@ -32,24 +32,24 @@ def get_file_extension(url: str) -> str:
     return extension
 
 
-def create_images_directory(path: str):
-    """Функция создает директорию, куда будут сохраняться картинки и возвращает её путь."""
+def create_images_directory(path: Path):
+    """Функция создает папку, куда будут сохраняться картинки и возвращает её путь."""
 
-    directory = Path.cwd().joinpath(path)
-    Path(directory).mkdir(parents=True, exist_ok=True)
-    return directory
+    folder = Path.cwd().joinpath(path)
+    Path(folder).mkdir(parents=True, exist_ok=True)
+    return folder
 
 
 def save_spacex_image(array: dict):
     """Функция сохраняет SpaceX фотографии"""
 
-    save_folder = f'images\\spacex\\{array["date"]}'
+    save_folder = Path.cwd()/'images'/'spacex'/array["date"]
     for link_number, link in enumerate(array['image_url'], 1):
         response = requests.get(link)
         response.raise_for_status()
-        file_extension = get_file_extension(link)
         save_path = create_images_directory(save_folder)
-        with open(f'{save_path}\\space_{link_number}{file_extension}', 'wb') as file:
+        file_name = 'space_' + str(link_number) + get_file_extension(link)
+        with open(save_path/file_name, 'wb') as file:
             file.write(response.content)
     print('Rocket launch photos saved in "images/spacex" folder')
 
@@ -60,11 +60,11 @@ def save_nasa_image(array: list):
     for elem_number, elem in enumerate(array, 1):
         response = requests.get(elem['image_url'])
         response.raise_for_status()
-        file_extension = get_file_extension(elem['image_url'])
         project_name = get_project_name(elem["image_url"])
-        save_folder = f'images\\nasa\\{project_name}'
+        save_folder = Path.cwd()/'images'/'nasa'/project_name
         save_path = create_images_directory(save_folder)
-        with open(f'{save_path}\\{project_name}_{elem_number}_{elem["date"]}{file_extension}', 'wb') as file:
+        file_name = project_name + '_' + str(elem_number) + '_' + elem["date"] + get_file_extension(elem['image_url'])
+        with open(save_path/file_name, 'wb') as file:
             file.write(response.content)
     print('NASA photos saved in "images/nasa" folder')
 
