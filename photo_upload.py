@@ -14,16 +14,28 @@ env = Env()
 env.read_env()
 
 
+def get_project_name(url: str) -> str:
+    """Функция вытаскивает из урла название проекта NASA"""
+
+    unq_url = unquote(url)
+    unq_split = urlsplit(unq_url)[1]
+    project_name = unq_split.split('.')[0]
+    return project_name
+
+
 def get_file_extension(url: str) -> str:
     """Функция вытаскивает из урла расширение файла"""
 
-    return splitext(urlsplit(unquote(url).replace(' ', '_'))[2])[1]
+    unq_url = unquote(url).replace(' ', '_')
+    unq_split = urlsplit(unq_url)[2]
+    extension = splitext(unq_split)[1]
+    return extension
 
 
 def create_images_directory(path: str):
     """Функция создает директорию, куда будут сохраняться картинки и возвращает её путь."""
 
-    directory = Path.cwd().joinpath(f'{path}')
+    directory = Path.cwd().joinpath(path)
     Path(directory).mkdir(parents=True, exist_ok=True)
     return directory
 
@@ -49,7 +61,7 @@ def save_nasa_image(array: list):
         response = requests.get(elem['image_url'])
         response.raise_for_status()
         file_extension = get_file_extension(elem['image_url'])
-        project_name = urlsplit(unquote(elem["image_url"]))[1].split(".")[0]
+        project_name = get_project_name(elem["image_url"])
         save_folder = f'images\\nasa\\{project_name}'
         save_path = create_images_directory(save_folder)
         with open(f'{save_path}\\{project_name}_{elem_number}_{elem["date"]}{file_extension}', 'wb') as file:
