@@ -1,10 +1,11 @@
+import argparse
 import random
 import sys
 from datetime import datetime
 
 import requests
 
-import photo_upload
+from boot_scripts import load_photo
 
 
 def get_random_launch_id() -> str:
@@ -37,5 +38,28 @@ def get_links_spacex_launch_images(launch_id: str = None) -> dict:
                 'image_url': launch['links']['flickr']['original']}
 
 
+def main():
+    """Функция запуска скрипта из командной строки."""
+
+    parser = argparse.ArgumentParser(
+        prog='load_spacex.py',
+        description='Loading images from the selected source.'
+    )
+    parser.add_argument('-id', '--id_launch', type=str, default='random',
+                        help='ID SpaceX launch')
+    args = parser.parse_args()
+
+    if args.id_launch == 'random':
+        print('Uploading photos random SpaceX launch')
+        load_photo(get_links_spacex_launch_images())
+        print('Rocket launch photos saved in "images/spacex" folder')
+    elif args.id_launch:
+        print(f'Uploading photos SpaceX launch - {args.id_launch}')
+        load_photo(get_links_spacex_launch_images(args.id_launch))
+        print('Rocket launch photos saved in "images/spacex" folder')
+    else:
+        print('Unknown command.')
+
+
 if __name__ == '__main__':
-    photo_upload.main_spacex()
+    main()
