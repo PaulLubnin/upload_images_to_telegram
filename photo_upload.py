@@ -32,41 +32,44 @@ def get_file_extension(url: str) -> str:
     return extension
 
 
-def create_images_directory(path: Path):
-    """Функция создает папку, куда будут сохраняться картинки и возвращает её путь."""
+def create_path(url: str, url_number: str, photo_date: str) -> Path:
+    """Функция обрабатывает урл, создает папку и возвращает путь файла"""
 
-    folder = Path.cwd().joinpath(path)
-    Path(folder).mkdir(parents=True, exist_ok=True)
-    return folder
-
-
-def save_spacex_image(array: dict):
-    """Функция сохраняет SpaceX фотографии"""
-
-    save_folder = Path.cwd()/'images'/'spacex'/array["date"]
-    for link_number, link in enumerate(array['image_url'], 1):
-        response = requests.get(link)
-        response.raise_for_status()
-        save_path = create_images_directory(save_folder)
-        file_name = 'space_' + str(link_number) + get_file_extension(link)
-        with open(save_path/file_name, 'wb') as file:
-            file.write(response.content)
-    print('Rocket launch photos saved in "images/spacex" folder')
+    project_name = 'spacex' if (get_project_name(url) != 'epic' and get_project_name(url) != 'apod') \
+        else get_project_name(url)
+    save_folder = Path.cwd() / 'images' / project_name / photo_date if project_name == 'spacex' \
+        else Path.cwd() / 'images' / 'nasa' / project_name
+    file_name = project_name + '_' + url_number + '_' + photo_date + get_file_extension(url)
+    Path(save_folder).mkdir(parents=True, exist_ok=True)
+    return save_folder / file_name
 
 
-def save_nasa_image(array: list):
-    """Функция сохраняет NASA фотографии"""
+def get_photo(url: str) -> bytes:
+    """Функция делает get запрос и возвращает фотографию"""
 
-    for elem_number, elem in enumerate(array, 1):
-        response = requests.get(elem['image_url'])
-        response.raise_for_status()
-        project_name = get_project_name(elem["image_url"])
-        save_folder = Path.cwd()/'images'/'nasa'/project_name
-        save_path = create_images_directory(save_folder)
-        file_name = project_name + '_' + str(elem_number) + '_' + elem["date"] + get_file_extension(elem['image_url'])
-        with open(save_path/file_name, 'wb') as file:
-            file.write(response.content)
-    print('NASA photos saved in "images/nasa" folder')
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.content
+
+
+def save_image(url: str, url_number: str, photo_date: str):
+    """Функция сохраняет фотографии"""
+
+    save_path = create_path(url, photo_date, url_number)
+    photo = get_photo(url)
+    with open(save_path, 'wb') as file:
+        file.write(photo)
+
+
+def load_photo(array: dict, link_number=1):
+    """Функция загружает фотографии"""
+
+    if type(array['image_url']) == list:
+        for url_number, url in enumerate(array['image_url'], 1):
+            save_image(url, array['date'], str(url_number))
+
+    if type(array['image_url']) == str:
+        save_image(array['image_url'], array['date'], str(link_number))
 
 
 def main_apod():
@@ -84,10 +87,14 @@ def main_apod():
 
     if args.quantity_apod == 30:
         print('Uploading 30 APOD photos')
-        save_nasa_image(load_apod.get_links_nasa_apod(nasa_api_key))
+        for link_number, image_link in enumerate(load_apod.get_links_nasa_apod(nasa_api_key), 1):
+            load_photo(image_link, link_number)
+        print('NASA photos saved in "images/nasa/apod/" folder')
     elif 50 >= args.quantity_apod >= 1:
         print(f'Uploading {args.quantity_apod} APOD photos')
-        save_nasa_image(load_apod.get_links_nasa_apod(nasa_api_key, args.quantity_apod))
+        for link_number, image_link in enumerate(load_apod.get_links_nasa_apod(nasa_api_key, args.quantity_apod), 1):
+            load_photo(image_link, link_number)
+        print('NASA photos saved in "images/nasa/apod/" folder')
     elif args.quantity_apod > 50:
         print('You can upload up to 50 photos at one time.')
     else:
@@ -109,10 +116,14 @@ def main_epic():
 
     if args.quantity_epic is None:
         print('Uploading EPIC photos')
-        save_nasa_image(load_epic.get_links_nasa_epic(nasa_api_key))
+        for link_number, image_link in enumerate(load_epic.get_links_nasa_epic(nasa_api_key), 1):
+            load_photo(image_link, link_number)
+        print('NASA photos saved in "images/nasa/epic/" folder')
     elif 12 >= args.quantity_epic >= 1:
         print(f'Uploading {args.quantity_epic} EPIC photos')
-        save_nasa_image(load_epic.get_links_nasa_epic(nasa_api_key, args.quantity_epic))
+        for link_number, image_link in enumerate(load_epic.get_links_nasa_epic(nasa_api_key, args.quantity_epic), 1):
+            load_photo(image_link, link_number)
+        print('NASA photos saved in "images/nasa/epic/" folder')
     elif args.quantity_epic > 12:
         print('You can upload up to 12 photos at one time')
     else:
@@ -132,9 +143,11 @@ def main_spacex():
 
     if args.id_launch == 'random':
         print('Uploading photos random SpaceX launch')
-        save_spacex_image(load_spacex.get_links_spacex_launch_images())
+        load_photo(load_spacex.get_links_spacex_launch_images())
+        print('Rocket launch photos saved in "images/spacex" folder')
     elif args.id_launch:
         print(f'Uploading photos SpaceX launch - {args.id_launch}')
-        save_spacex_image(load_spacex.get_links_spacex_launch_images(args.id_launch))
+        load_photo(load_spacex.get_links_spacex_launch_images(args.id_launch))
+        print('Rocket launch photos saved in "images/spacex" folder')
     else:
         print('Unknown command.')
