@@ -16,11 +16,12 @@ def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
     apods = get_json(api_apod_url, params=params)
 
     for apod in apods:
-        one_apod = {
-            'date': apod['date'],
-            'image_url': apod['url']
-        }
-        all_apod.append(one_apod)
+        if apod['media_type'] == 'image':
+            one_apod = {
+                'date': apod['date'],
+                'image_url': apod['url']
+            }
+            all_apod.append(one_apod)
 
     return all_apod
 
