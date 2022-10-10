@@ -10,11 +10,11 @@ def get_links_nasa_epic(nasa_api_key, quantity_epic: int = None) -> list:
     Возвращает список словарей с 'image_url' и 'date'."""
 
     all_epic = []
-    api_nasa = 'https://epic.gsfc.nasa.gov/api/natural'
+    api_epic_url = 'https://epic.gsfc.nasa.gov/api/natural'
     params = {
         'api_key': nasa_api_key,
     }
-    epics = get_json(api_nasa, params=params)
+    epics = get_json(api_epic_url, params=params)
 
     for epic in epics:
         one_epic = {

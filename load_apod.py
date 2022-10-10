@@ -8,12 +8,12 @@ def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
     Возвращает список словарей с 'image_url' и 'date'."""
 
     all_apod = []
-    api_nasa = 'https://api.nasa.gov/planetary/apod'
+    api_apod_url = 'https://api.nasa.gov/planetary/apod'
     params = {
         'api_key': nasa_api_key,
         'count': quantity_apod
     }
-    apods = get_json(api_nasa, params=params)
+    apods = get_json(api_apod_url, params=params)
 
     for apod in apods:
         one_apod = {

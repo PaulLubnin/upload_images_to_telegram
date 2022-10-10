@@ -20,9 +20,9 @@ def get_links_spacex_launch_images(launch_id: str = None) -> dict:
     """Функция вытаскивает ссылки на картинки c сайта SpaceX,
      либо по заданному 'id', либо случайный вариант. Возвращает словарь с 'date' и 'image_url'."""
 
-    api_spacex = f'https://api.spacexdata.com/v5/launches/{launch_id}' \
+    api_spacex_url = f'https://api.spacexdata.com/v5/launches/{launch_id}' \
         if launch_id else f'https://api.spacexdata.com/v5/launches/{get_random_launch_id()}'
-    launch = get_json(api_spacex)
+    launch = get_json(api_spacex_url)
 
     if not launch['links']['flickr']['original']:
         print('Selected launch has no photos')
