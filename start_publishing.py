@@ -6,13 +6,8 @@ import time
 from pathlib import Path
 
 import telegram
-from environs import Env
 
-env = Env()
-env.read_env()
-
-TG_BOT_TOKEN = env('TG_BOT_TOKEN')
-TG_CHAT_ID = env('TG_CHAT_ID')
+from boot_scripts import TG_BOT_TOKEN, TG_CHAT_ID
 
 
 def get_photo_paths() -> list:
