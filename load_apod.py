@@ -1,8 +1,6 @@
 import argparse
 
-import requests
-
-from boot_scripts import load_photo, NASA_API_KEY
+from boot_scripts import load_photo, NASA_API_KEY, get_json
 
 
 def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
@@ -15,10 +13,9 @@ def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
         'api_key': nasa_api_key,
         'count': quantity_apod
     }
-    response = requests.get(api_nasa, params=params)
-    response.raise_for_status()
+    apods = get_json(api_nasa, params=params)
 
-    for apod in response.json():
+    for apod in apods:
         one_apod = {
             'date': apod['date'],
             'image_url': apod['url']

@@ -2,9 +2,7 @@ import argparse
 import random
 from datetime import datetime
 
-import requests
-
-from boot_scripts import load_photo, NASA_API_KEY
+from boot_scripts import load_photo, NASA_API_KEY, get_json
 
 
 def get_links_nasa_epic(nasa_api_key, quantity_epic: int = None) -> list:
@@ -16,10 +14,9 @@ def get_links_nasa_epic(nasa_api_key, quantity_epic: int = None) -> list:
     params = {
         'api_key': nasa_api_key,
     }
-    response = requests.get(api_nasa, params=params)
-    response.raise_for_status()
+    epics = get_json(api_nasa, params=params)
 
-    for epic in response.json():
+    for epic in epics:
         one_epic = {
             'date': datetime.fromisoformat(epic['date']).strftime('%Y-%m-%d'),
             'image_url': f'https://epic.gsfc.nasa.gov/archive/natural/'

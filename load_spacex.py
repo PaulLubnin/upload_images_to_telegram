@@ -3,18 +3,14 @@ import random
 import sys
 from datetime import datetime
 
-import requests
-
-from boot_scripts import load_photo
+from boot_scripts import load_photo, get_json
 
 
 def get_random_launch_id() -> str:
     """Функция для получения рандомного идентификатора запуска."""
 
     all_spacex = 'https://api.spacexdata.com/v5/launches/'
-    response = requests.get(all_spacex)
-    response.raise_for_status()
-    launches = response.json()
+    launches = get_json(all_spacex)
     launch_ids = [launch['id'] for launch in launches]
 
     return random.choice(launch_ids)
@@ -26,9 +22,7 @@ def get_links_spacex_launch_images(launch_id: str = None) -> dict:
 
     api_spacex = f'https://api.spacexdata.com/v5/launches/{launch_id}' \
         if launch_id else f'https://api.spacexdata.com/v5/launches/{get_random_launch_id()}'
-    response = requests.get(api_spacex)
-    response.raise_for_status()
-    launch = response.json()
+    launch = get_json(api_spacex)
 
     if not launch['links']['flickr']['original']:
         print('Selected launch has no photos')

@@ -49,6 +49,14 @@ def get_photo(url: str) -> bytes:
     return response.content
 
 
+def get_json(url: str, params: dict = None) -> dict:
+    """Функция делает get запрос и возвращает JSON"""
+
+    response = requests.get(url, params=params)
+    response.raise_for_status()
+    return response.json()
+
+
 def save_image(url: str, url_number: str, photo_date: str):
     """Функция сохраняет фотографии"""
 
