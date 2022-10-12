@@ -6,8 +6,7 @@ import time
 from pathlib import Path
 
 import telegram
-
-from boot_scripts import TG_BOT_TOKEN, TG_CHAT_ID
+from environs import Env
 
 
 def get_photo_paths() -> list:
@@ -43,6 +42,9 @@ def send_photo(tg_bot_token: str, tg_chat_id: str, publication_frequency: int = 
 def main():
     """Функция запуска бота из командной строки."""
 
+    env = Env()
+    env.read_env()
+
     parser = argparse.ArgumentParser(
         prog='start_publishing.py',
         description='Publication of photos in a telegram channel')
@@ -53,7 +55,7 @@ def main():
 
     if args.periodicity == 14400:
         print('Photos are posted every 4 hours')
-        send_photo(TG_BOT_TOKEN, TG_CHAT_ID)
+        send_photo(env('TG_BOT_TOKEN'), env('TG_CHAT_ID'))
 
     elif args.periodicity > 14400:
         print('Max frequency is 4 hors (14400 sec)!')
@@ -62,7 +64,7 @@ def main():
     elif 0 < args.periodicity < 14400:
         print(f'Photos are posted every {args.periodicity} seconds.')
         while True:
-            send_photo(TG_BOT_TOKEN, TG_CHAT_ID, args.periodicity)
+            send_photo(env('TG_BOT_TOKEN'), env('TG_CHAT_ID'), args.periodicity)
 
     else:
         print('Unknown command.')

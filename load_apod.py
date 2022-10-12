@@ -1,6 +1,8 @@
 import argparse
 
-from boot_scripts import load_photo, NASA_API_KEY, get_json
+from environs import Env
+
+from boot_scripts import load_photo, get_json
 
 
 def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
@@ -29,6 +31,9 @@ def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
 def main():
     """Функция запуска скрипта из командной строки."""
 
+    env = Env()
+    env.read_env()
+
     parser = argparse.ArgumentParser(
         prog='load_apod.py',
         description='Loading images from the selected source.'
@@ -39,12 +44,12 @@ def main():
 
     if args.quantity_apod == 30:
         print('Uploading 30 APOD photos')
-        for link_number, image_link in enumerate(get_links_nasa_apod(NASA_API_KEY), 1):
+        for link_number, image_link in enumerate(get_links_nasa_apod(env('NASA_API_KEY')), 1):
             load_photo(image_link, link_number)
         print('NASA photos saved in "images/nasa/apod/" folder')
     elif 50 >= args.quantity_apod >= 1:
         print(f'Uploading {args.quantity_apod} APOD photos')
-        for link_number, image_link in enumerate(get_links_nasa_apod(NASA_API_KEY, args.quantity_apod), 1):
+        for link_number, image_link in enumerate(get_links_nasa_apod(env('NASA_API_KEY'), args.quantity_apod), 1):
             load_photo(image_link, link_number)
         print('NASA photos saved in "images/nasa/apod/" folder')
     elif args.quantity_apod > 50:

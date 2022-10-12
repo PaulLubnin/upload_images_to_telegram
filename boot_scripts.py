@@ -3,14 +3,6 @@ from pathlib import Path
 from urllib.parse import urlsplit, unquote
 
 import requests
-from environs import Env
-
-env = Env()
-env.read_env()
-
-NASA_API_KEY = env('NASA_API_KEY')
-TG_BOT_TOKEN = env('TG_BOT_TOKEN')
-TG_CHAT_ID = env('TG_CHAT_ID')
 
 
 def get_project_name(url: str) -> str:

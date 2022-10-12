@@ -2,7 +2,9 @@ import argparse
 import random
 from datetime import datetime
 
-from boot_scripts import load_photo, NASA_API_KEY, get_json
+from environs import Env
+
+from boot_scripts import load_photo, get_json
 
 
 def get_links_nasa_epic(nasa_api_key, quantity_epic: int = None) -> list:
@@ -32,6 +34,9 @@ def get_links_nasa_epic(nasa_api_key, quantity_epic: int = None) -> list:
 def main():
     """Функция запуска скрипта из командной строки."""
 
+    env = Env()
+    env.read_env()
+
     parser = argparse.ArgumentParser(
         prog='load_epic.py',
         description='Loading images from the selected source.'
@@ -42,12 +47,12 @@ def main():
 
     if args.quantity_epic is None:
         print('Uploading EPIC photos')
-        for link_number, image_link in enumerate(get_links_nasa_epic(NASA_API_KEY), 1):
+        for link_number, image_link in enumerate(get_links_nasa_epic(env('NASA_API_KEY')), 1):
             load_photo(image_link, link_number)
         print('NASA photos saved in "images/nasa/epic/" folder')
     elif 12 >= args.quantity_epic >= 1:
         print(f'Uploading {args.quantity_epic} EPIC photos')
-        for link_number, image_link in enumerate(get_links_nasa_epic(NASA_API_KEY, args.quantity_epic), 1):
+        for link_number, image_link in enumerate(get_links_nasa_epic(env('NASA_API_KEY'), args.quantity_epic), 1):
             load_photo(image_link, link_number)
         print('NASA photos saved in "images/nasa/epic/" folder')
     elif args.quantity_epic > 12:
