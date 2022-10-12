@@ -2,9 +2,10 @@ import argparse
 import random
 from datetime import datetime
 
+import requests
 from environs import Env
 
-from boot_scripts import load_photo, get_json
+from boot_scripts import load_photo
 
 
 def get_links_nasa_epic(nasa_api_key, quantity_epic: int = None) -> list:
@@ -16,7 +17,9 @@ def get_links_nasa_epic(nasa_api_key, quantity_epic: int = None) -> list:
     params = {
         'api_key': nasa_api_key,
     }
-    epics = get_json(api_epic_url, params=params)
+    response = requests.get(api_epic_url, params=params)
+    response.raise_for_status()
+    epics = response.json()
 
     for epic in epics:
         one_epic = {
@@ -50,13 +53,16 @@ def main():
         for link_number, image_link in enumerate(get_links_nasa_epic(env('NASA_API_KEY')), 1):
             load_photo(image_link, link_number)
         print('NASA photos saved in "images/nasa/epic/" folder')
+
     elif 12 >= args.quantity_epic >= 1:
         print(f'Uploading {args.quantity_epic} EPIC photos')
         for link_number, image_link in enumerate(get_links_nasa_epic(env('NASA_API_KEY'), args.quantity_epic), 1):
             load_photo(image_link, link_number)
         print('NASA photos saved in "images/nasa/epic/" folder')
+
     elif args.quantity_epic > 12:
         print('You can upload up to 12 photos at one time')
+
     else:
         print('Unknown command.')
 

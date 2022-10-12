@@ -35,27 +35,13 @@ def create_path(url: str, url_number: str, photo_date: str) -> Path:
     return save_folder / file_name
 
 
-def get_photo(url: str) -> bytes:
-    """Функция делает get запрос и возвращает фотографию"""
-
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.content
-
-
-def get_json(url: str, params: dict = None) -> dict:
-    """Функция делает get запрос и возвращает JSON"""
-
-    response = requests.get(url, params=params)
-    response.raise_for_status()
-    return response.json()
-
-
 def save_image(url: str, url_number: str, photo_date: str):
     """Функция сохраняет фотографии"""
 
     save_path = create_path(url, photo_date, url_number)
-    photo = get_photo(url)
+    response = requests.get(url)
+    response.raise_for_status()
+    photo = response.content
     with open(save_path, 'wb') as file:
         file.write(photo)
 

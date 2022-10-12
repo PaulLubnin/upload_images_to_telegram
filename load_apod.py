@@ -1,8 +1,9 @@
 import argparse
 
+import requests
 from environs import Env
 
-from boot_scripts import load_photo, get_json
+from boot_scripts import load_photo
 
 
 def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
@@ -15,7 +16,9 @@ def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
         'api_key': nasa_api_key,
         'count': quantity_apod
     }
-    apods = get_json(api_apod_url, params=params)
+    response = requests.get(api_apod_url, params=params)
+    response.raise_for_status()
+    apods = response.json()
 
     for apod in apods:
         if apod['media_type'] == 'image':
@@ -47,13 +50,16 @@ def main():
         for link_number, image_link in enumerate(get_links_nasa_apod(env('NASA_API_KEY')), 1):
             load_photo(image_link, link_number)
         print('NASA photos saved in "images/nasa/apod/" folder')
+
     elif 50 >= args.quantity_apod >= 1:
         print(f'Uploading {args.quantity_apod} APOD photos')
         for link_number, image_link in enumerate(get_links_nasa_apod(env('NASA_API_KEY'), args.quantity_apod), 1):
             load_photo(image_link, link_number)
         print('NASA photos saved in "images/nasa/apod/" folder')
+
     elif args.quantity_apod > 50:
         print('You can upload up to 50 photos at one time.')
+
     else:
         print('Unknown command.')
 
