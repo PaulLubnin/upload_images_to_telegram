@@ -1,7 +1,6 @@
 import argparse
 import os
 import random
-import sys
 import time
 from pathlib import Path
 
@@ -48,20 +47,12 @@ def main():
         description='Publication of photos in a telegram channel')
     parser.add_argument(
         '-p', '--periodicity', default=14400, type=int,
-        help='Photo posting frequency. Seconds. Max frequency 4 hors (14400 sec).')
+        help='Photo posting frequency. Seconds.')
     args = parser.parse_args()
 
-    if args.periodicity > 14400:
-        print('Max frequency is 4 hors (14400 sec)!')
-        sys.exit()
-
-    elif 0 < args.periodicity <= 14400:
-        print(f'Photos are posted every {args.periodicity} seconds.')
-        while True:
-            send_photo(env('TG_BOT_TOKEN'), env('TG_CHAT_ID'), args.periodicity)
-
-    else:
-        print('Unknown command.')
+    print(f'Photos are posted every {args.periodicity} seconds.')
+    while True:
+        send_photo(env('TG_BOT_TOKEN'), env('TG_CHAT_ID'), args.periodicity)
 
 
 if __name__ == '__main__':
