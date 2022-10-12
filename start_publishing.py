@@ -17,26 +17,24 @@ def get_photo_paths() -> list:
 
     all_photos = []
     for adress, dirs, files in tree_directories:
-        if files:
-            for name in files:
-                all_photos.append(Path.cwd().joinpath(adress).joinpath(name))
+        for name in files:
+            all_photos.append(Path.cwd().joinpath(adress).joinpath(name))
     return all_photos
 
 
-def send_photo(tg_bot_token: str, tg_chat_id: str, publication_frequency: int = 14400, photo=False):
+def send_photo(tg_bot_token: str, tg_chat_id: str, publication_frequency: int = 14400):
     """Функция отправляет по одной фотографии в чат через указанный интервал."""
 
     bot = telegram.Bot(token=tg_bot_token)
     photos = get_photo_paths()
 
-    if not photo:
-        with open(random.choice(photos), 'rb') as file:
-            try:
-                bot.send_photo(chat_id=tg_chat_id,
-                               photo=file)
-            except telegram.error.BadRequest as error:
-                print(error)
-            time.sleep(publication_frequency)
+    with open(random.choice(photos), 'rb') as file:
+        try:
+            bot.send_photo(chat_id=tg_chat_id,
+                           photo=file)
+        except telegram.error.BadRequest as error:
+            print(error)
+        time.sleep(publication_frequency)
 
 
 def main():
@@ -53,15 +51,11 @@ def main():
         help='Photo posting frequency. Seconds. Max frequency 4 hors (14400 sec).')
     args = parser.parse_args()
 
-    if args.periodicity == 14400:
-        print('Photos are posted every 4 hours')
-        send_photo(env('TG_BOT_TOKEN'), env('TG_CHAT_ID'))
-
-    elif args.periodicity > 14400:
+    if args.periodicity > 14400:
         print('Max frequency is 4 hors (14400 sec)!')
         sys.exit()
 
-    elif 0 < args.periodicity < 14400:
+    elif 0 < args.periodicity <= 14400:
         print(f'Photos are posted every {args.periodicity} seconds.')
         while True:
             send_photo(env('TG_BOT_TOKEN'), env('TG_CHAT_ID'), args.periodicity)
