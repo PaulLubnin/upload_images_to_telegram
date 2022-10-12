@@ -49,9 +49,9 @@ def save_image(url: str, url_number: str, photo_date: str):
 def load_photo(array: dict, link_number=1):
     """Функция загружает фотографии"""
 
-    if type(array['image_url']) == list:
+    if isinstance(array['image_url'], list):
         for url_number, url in enumerate(array['image_url'], 1):
             save_image(url, array['date'], str(url_number))
 
-    if type(array['image_url']) == str:
+    if isinstance(array['image_url'], str):
         save_image(array['image_url'], array['date'], str(link_number))
