@@ -30,7 +30,7 @@ def create_path(url: str, url_number: str, photo_date: str) -> Path:
         else get_project_name(url)
     save_folder = Path.cwd() / 'images' / project_name / photo_date if project_name == 'spacex' \
         else Path.cwd() / 'images' / 'nasa' / project_name
-    file_name = project_name + '_' + url_number + '_' + photo_date + get_file_extension(url)
+    file_name = f'{project_name}_{url_number}_{photo_date}{get_file_extension(url)}'
     Path(save_folder).mkdir(parents=True, exist_ok=True)
     return save_folder / file_name
 
