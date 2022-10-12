@@ -14,10 +14,10 @@ def get_photo_paths() -> list:
     directory = Path.cwd().joinpath('images')
     tree_directories = os.walk(directory)
 
-    all_photos = []
-    for adress, dirs, files in tree_directories:
-        for name in files:
-            all_photos.append(Path.cwd().joinpath(adress).joinpath(name))
+    all_photos = [Path.cwd().joinpath(adress).joinpath(name)
+                  for adress, dirs, files in tree_directories
+                  for name in files]
+
     return all_photos
 
 
