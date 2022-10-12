@@ -51,13 +51,14 @@ def main():
     args = parser.parse_args()
 
     print(f'Photos are posted every {args.periodicity} seconds.')
-
+    connection_counter = 0
     while True:
         try:
             send_photo(env('TG_BOT_TOKEN'), env('TG_CHAT_ID'), args.periodicity)
         except telegram.error.NetworkError:
             print('No network connection.')
-            time.sleep(60)
+            time.sleep(15) if connection_counter == 0 else time.sleep(60)
+            connection_counter += 1
 
 
 if __name__ == '__main__':
