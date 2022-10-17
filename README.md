@@ -15,11 +15,11 @@ TG_CHAT_ID=<tg_chat_id>
 ```
 
 ### Как запустить:
-- Для загрузки APOD, где QUANTITY_APOD количество фотографий, не более 50 за раз:
+- Для загрузки APOD, где QUANTITY_APOD количество фотографий:
 ```
 python load_apod.py -qa [QUANTITY_APOD]
 ```
-- Для загрузки EPIC, где QUANTITY_EPIC количество фотографий, не более 12 за раз:
+- Для загрузки EPIC, где QUANTITY_EPIC количество фотографий:
 ```
 python load_epic.py -qe [QUANTITY_EPIC]
 ```
