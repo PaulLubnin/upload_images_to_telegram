@@ -3,12 +3,11 @@ import argparse
 import requests
 from environs import Env
 
-from boot_scripts import load_photo
+from boot_scripts import create_data, save_image
 
 
-def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
-    """Функция получает ссылки на фотографии APOD c сайта NASA.
-    Возвращает список словарей с 'image_url' и 'date'."""
+def get_nasa_apod(nasa_api_key, quantity_apod: int):
+    """Функция сохраняет фотографии APOD c сайта NASA."""
 
     api_apod_url = 'https://api.nasa.gov/planetary/apod'
     params = {
@@ -17,10 +16,8 @@ def get_links_nasa_apod(nasa_api_key, quantity_apod: int = 30) -> list:
     }
     response = requests.get(api_apod_url, params=params)
     response.raise_for_status()
-    apods = response.json()
-    all_apod = [{'date': apod['date'], 'image_url': apod['url']} for apod in apods if apod['media_type'] == 'image']
-
-    return all_apod
+    all_apods = create_data(response.json())
+    save_image(all_apods)
 
 
 def main():
@@ -34,13 +31,12 @@ def main():
         description='Loading images from the selected source.'
     )
     parser.add_argument('-qa', '--quantity_apod', type=int, default=30,
-                        help='Quantity of APOD photos uploaded.')
+                        help='Quantity of APOD photos uploaded. Default 30 photo.')
     args = parser.parse_args()
 
     if args.quantity_apod:
-        print(f'Uploading {args.quantity_apod} APOD photos')
-        for link_number, image_link in enumerate(get_links_nasa_apod(env('NASA_API_KEY'), args.quantity_apod), 1):
-            load_photo(image_link, link_number)
+        print(f'Uploading APOD photos')
+        get_nasa_apod(env('NASA_API_KEY'), args.quantity_apod)
         print('NASA photos saved in "images/nasa/apod/" folder')
 
     else:

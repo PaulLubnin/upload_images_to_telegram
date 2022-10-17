@@ -1,11 +1,9 @@
 import argparse
 import random
-import sys
-from datetime import datetime
 
 import requests
 
-from boot_scripts import load_photo
+from boot_scripts import create_data, save_image
 
 API_SPACEX_URL = 'https://api.spacexdata.com/v5/launches/'
 
@@ -21,22 +19,15 @@ def get_random_launch_id() -> str:
     return random.choice(launch_ids)
 
 
-def get_links_spacex_launch_images(launch_id: str = None) -> dict:
-    """Функция вытаскивает ссылки на картинки c сайта SpaceX,
-     либо по заданному 'id', либо случайный вариант. Возвращает словарь с 'date' и 'image_url'."""
+def get_links_spacex_launch_images(launch_id: str = None):
+    """Функция сохраняет фотографии запуска ракет c сайта SpaceX."""
 
     api_spacex_url = f'{API_SPACEX_URL}{launch_id}' \
         if launch_id else f'{API_SPACEX_URL}{get_random_launch_id()}'
     response = requests.get(api_spacex_url)
     response.raise_for_status()
-    launch = response.json()
-
-    if not launch['links']['flickr']['original']:
-        print('Selected launch has no photos')
-        sys.exit()
-    else:
-        return {'date': datetime.fromisoformat(launch['date_local']).strftime('%Y-%m-%d'),
-                'image_url': launch['links']['flickr']['original']}
+    all_spacex = create_data(response.json())
+    save_image(all_spacex)
 
 
 def main():
@@ -52,12 +43,12 @@ def main():
 
     if args.id_launch == 'random':
         print('Uploading photos random SpaceX launch')
-        load_photo(get_links_spacex_launch_images())
+        get_links_spacex_launch_images()
         print('Rocket launch photos saved in "images/spacex" folder')
 
     elif args.id_launch:
         print(f'Uploading photos SpaceX launch - {args.id_launch}')
-        load_photo(get_links_spacex_launch_images(args.id_launch))
+        get_links_spacex_launch_images(args.id_launch)
         print('Rocket launch photos saved in "images/spacex" folder')
 
     else:
