@@ -70,8 +70,7 @@ def create_data(json) -> list:
 
     if isinstance(json, dict):
         if not json['links']['flickr']['original']:
-            print('Selected launch has no photos')
-            sys.exit()
+            raise ValueError('Selected launch has no photos')
         else:
             data = [{'date': datetime.fromisoformat(json['date_local']).strftime('%Y-%m-%d'),
                      'image_url': elem} for elem in json['links']['flickr']['original']]
