@@ -25,7 +25,7 @@ def main():
 
     print(f'Uploading EPIC photos')
     get_links_nasa_epic(env('NASA_API_KEY'))
-    print('NASA photos saved in "images/nasa/epic/" folder')
+    print('NASA photos saved in "images/epic/" folder')
 
 
 if __name__ == '__main__':

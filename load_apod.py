@@ -37,7 +37,7 @@ def main():
     if args.quantity_apod:
         print(f'Uploading APOD photos')
         get_nasa_apod(env('NASA_API_KEY'), args.quantity_apod)
-        print('NASA photos saved in "images/nasa/apod/" folder')
+        print('NASA photos saved in "images/apod/" folder')
 
     else:
         print('Unknown command.')

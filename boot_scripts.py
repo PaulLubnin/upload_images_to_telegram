@@ -8,11 +8,12 @@ import requests
 
 
 def get_project_name(url: str) -> str:
-    """Функция вытаскивает из урла название проекта NASA"""
+    """Функция вытаскивает и возвращает из урла название проекта."""
 
     unq_url = unquote(url)
     unq_split = urlsplit(unq_url)[1]
-    project_name = unq_split.split('.')[0]
+    prefix = unq_split.split('.')[0]
+    project_name = 'spacex' if (prefix != 'epic' and prefix != 'apod') else prefix
     return project_name
 
 
@@ -26,13 +27,10 @@ def get_file_extension(url: str) -> str:
 
 
 def create_path(url: str, url_number: str, photo_date: str) -> Path:
-    """Функция обрабатывает урл, создает папку и возвращает путь файла"""
+    """Функция создает папку и возвращает путь файла"""
 
-    project_name = 'spacex' if (get_project_name(url) != 'epic' and get_project_name(url) != 'apod') \
-        else get_project_name(url)
-    save_folder = Path.cwd() / 'images' / project_name / photo_date if project_name == 'spacex' \
-        else Path.cwd() / 'images' / 'nasa' / project_name
-    file_name = f'{project_name}_{url_number}_{photo_date}{get_file_extension(url)}'
+    save_folder = Path.cwd() / 'images' / get_project_name(url) / photo_date
+    file_name = f'{get_project_name(url)}_{url_number}_{photo_date}{get_file_extension(url)}'
     Path(save_folder).mkdir(parents=True, exist_ok=True)
     return save_folder / file_name
 
