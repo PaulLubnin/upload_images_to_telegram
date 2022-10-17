@@ -34,23 +34,14 @@ def main():
         description='Loading images from the selected source.'
     )
     parser.add_argument('-qa', '--quantity_apod', type=int, default=30,
-                        help='Quantity of APOD photos uploaded. Max 50 photo.')
+                        help='Quantity of APOD photos uploaded.')
     args = parser.parse_args()
 
-    if args.quantity_apod == 30:
-        print('Uploading 30 APOD photos')
-        for link_number, image_link in enumerate(get_links_nasa_apod(env('NASA_API_KEY')), 1):
-            load_photo(image_link, link_number)
-        print('NASA photos saved in "images/nasa/apod/" folder')
-
-    elif 50 >= args.quantity_apod >= 1:
+    if args.quantity_apod:
         print(f'Uploading {args.quantity_apod} APOD photos')
         for link_number, image_link in enumerate(get_links_nasa_apod(env('NASA_API_KEY'), args.quantity_apod), 1):
             load_photo(image_link, link_number)
         print('NASA photos saved in "images/nasa/apod/" folder')
-
-    elif args.quantity_apod > 50:
-        print('You can upload up to 50 photos at one time.')
 
     else:
         print('Unknown command.')
