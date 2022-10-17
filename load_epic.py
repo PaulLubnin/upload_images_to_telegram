@@ -4,7 +4,7 @@ from environs import Env
 from boot_scripts import create_data, save_image
 
 
-def get_links_nasa_epic(nasa_api_key):
+def get_nasa_epic_images(nasa_api_key):
     """Функция сохраняет фотографии EPIC c сайта NASA."""
 
     api_epic_url = 'https://epic.gsfc.nasa.gov/api/natural'

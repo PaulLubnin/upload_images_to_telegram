@@ -19,7 +19,7 @@ def get_random_launch_id() -> str:
     return random.choice(launch_ids)
 
 
-def get_links_spacex_launch_images(launch_id: str = None):
+def get_spacex_launch_images(launch_id: str = None):
     """Функция сохраняет фотографии запуска ракет c сайта SpaceX."""
 
     api_spacex_url = f'{API_SPACEX_URL}{launch_id}' \
@@ -43,12 +43,12 @@ def main():
 
     if args.id_launch == 'random':
         print('Uploading photos random SpaceX launch')
-        get_links_spacex_launch_images()
+        get_spacex_launch_images()
         print('Rocket launch photos saved in "images/spacex" folder')
 
     elif args.id_launch:
         print(f'Uploading photos SpaceX launch - {args.id_launch}')
-        get_links_spacex_launch_images(args.id_launch)
+        get_spacex_launch_images(args.id_launch)
         print('Rocket launch photos saved in "images/spacex" folder')
 
     else:

@@ -6,7 +6,7 @@ from environs import Env
 from boot_scripts import create_data, save_image
 
 
-def get_nasa_apod(nasa_api_key, quantity_apod: int):
+def get_nasa_apod_images(nasa_api_key, quantity_apod: int):
     """Функция сохраняет фотографии APOD c сайта NASA."""
 
     api_apod_url = 'https://api.nasa.gov/planetary/apod'
@@ -36,7 +36,7 @@ def main():
 
     if args.quantity_apod:
         print(f'Uploading APOD photos')
-        get_nasa_apod(env('NASA_API_KEY'), args.quantity_apod)
+        get_nasa_apod_images(env('NASA_API_KEY'), args.quantity_apod)
         print('NASA photos saved in "images/apod/" folder')
 
     else:
