@@ -3,7 +3,7 @@ import argparse
 import requests
 from environs import Env
 
-from boot_scripts import create_data, save_image
+from boot_scripts import creating_apod_data, save_image
 
 
 def get_nasa_apod_images(nasa_api_key, quantity_apod: int):
@@ -16,7 +16,7 @@ def get_nasa_apod_images(nasa_api_key, quantity_apod: int):
     }
     response = requests.get(api_apod_url, params=params)
     response.raise_for_status()
-    all_apods = create_data(response.json())
+    all_apods = [creating_apod_data(elem) for elem in response.json() if elem['media_type'] == 'image']
     save_image(all_apods)
 
 

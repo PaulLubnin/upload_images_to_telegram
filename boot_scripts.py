@@ -1,4 +1,3 @@
-import sys
 from datetime import datetime
 from os.path import splitext
 from pathlib import Path
@@ -47,31 +46,27 @@ def save_image(array: list):
             file.write(photo)
 
 
-def create_data(json) -> list:
-    """Функция создает список словарей из входящего JSON. Словарь: {'date': , 'image_url': }."""
+def creating_apod_data(json: dict) -> dict:
+    """Функция создаёт словарь {'date': , 'image_url': } из входящего JSON."""
 
-    if isinstance(json, list):
-        data = []
-        for elem in json:
-            if elem.get('media_type'):
-                if elem['media_type'] == 'image':
-                    data.append({
-                        'date': datetime.fromisoformat(elem['date']).strftime('%Y-%m-%d'),
-                        'image_url': elem['url']
-                    })
-            else:
-                data.append({
-                    'date': datetime.fromisoformat(elem['date']).strftime('%Y-%m-%d'),
-                    'image_url': f'https://epic.gsfc.nasa.gov/archive/natural/'
-                                 f'{datetime.fromisoformat(elem["date"]).strftime("%Y/%m/%d")}'
-                                 f'/png/{elem["image"]}.png'
-                })
-        return data
+    data = {'date': datetime.fromisoformat(json['date']).strftime('%Y-%m-%d'),
+            'image_url': json['url']}
+    return data
 
-    if isinstance(json, dict):
-        if not json['links']['flickr']['original']:
-            raise ValueError('Selected launch has no photos')
-        else:
-            data = [{'date': datetime.fromisoformat(json['date_local']).strftime('%Y-%m-%d'),
-                     'image_url': elem} for elem in json['links']['flickr']['original']]
-            return data
+
+def creating_epic_data(json: dict) -> dict:
+    """Функция создаёт словарь {'date': , 'image_url': } из входящего JSON."""
+
+    data = {'date': datetime.fromisoformat(json['date']).strftime('%Y-%m-%d'),
+            'image_url': f'https://epic.gsfc.nasa.gov/archive/natural/'
+                         f'{datetime.fromisoformat(json["date"]).strftime("%Y/%m/%d")}'
+                         f'/png/{json["image"]}.png'}
+    return data
+
+
+def creating_spacex_data(json: dict) -> list:
+    """Функция создает список словарей {'date': , 'image_url': } из входящего JSON."""
+
+    data = [{'date': datetime.fromisoformat(json['date_local']).strftime('%Y-%m-%d'),
+             'image_url': elem} for elem in json['links']['flickr']['original']]
+    return data

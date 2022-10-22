@@ -3,7 +3,7 @@ import random
 
 import requests
 
-from boot_scripts import create_data, save_image
+from boot_scripts import creating_spacex_data, save_image
 
 API_SPACEX_URL = 'https://api.spacexdata.com/v5/launches/'
 
@@ -26,7 +26,9 @@ def get_spacex_launch_images(launch_id: str = None):
         if launch_id else f'{API_SPACEX_URL}{get_random_launch_id()}'
     response = requests.get(api_spacex_url)
     response.raise_for_status()
-    all_spacex = create_data(response.json())
+    if not response.json()['links']['flickr']['original']:
+        raise SystemExit('Selected launch has no photos')
+    all_spacex = creating_spacex_data(response.json())
     save_image(all_spacex)
 
 
