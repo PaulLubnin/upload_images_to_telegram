@@ -38,7 +38,7 @@ def get_spacex_launch_images(launch_id: str = None):
     if not response.json()['links']['flickr']['original']:
         raise SystemExit('Selected launch has no photos')
     all_spacex = creating_spacex_data(response.json())
-    save_image(all_spacex)
+    save_image(all_spacex, folder='spacex')
 
 
 def main():

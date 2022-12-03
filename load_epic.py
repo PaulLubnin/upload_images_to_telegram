@@ -26,7 +26,7 @@ def get_nasa_epic_images(nasa_api_key):
     response = requests.get(api_epic_url, params=params)
     response.raise_for_status()
     all_epics = [creating_epic_data(elem) for elem in response.json()]
-    save_image(all_epics)
+    save_image(all_epics, folder='epic')
 
 
 def main():

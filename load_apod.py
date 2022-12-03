@@ -26,7 +26,7 @@ def get_nasa_apod_images(nasa_api_key, quantity_apod: int):
     response = requests.get(api_apod_url, params=params)
     response.raise_for_status()
     all_apods = [creating_apod_data(elem) for elem in response.json() if elem['media_type'] == 'image']
-    save_image(all_apods)
+    save_image(all_apods, folder='apod')
 
 
 def main():
