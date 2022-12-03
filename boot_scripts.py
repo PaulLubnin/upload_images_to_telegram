@@ -1,4 +1,3 @@
-from datetime import datetime
 from os.path import splitext
 from pathlib import Path
 from urllib.parse import urlsplit, unquote
@@ -44,29 +43,3 @@ def save_image(array: list):
         photo = response.content
         with open(save_path, 'wb') as file:
             file.write(photo)
-
-
-def creating_apod_data(json: dict) -> dict:
-    """Функция создаёт словарь {'date': , 'image_url': } из входящего JSON."""
-
-    data = {'date': datetime.fromisoformat(json['date']).strftime('%Y-%m-%d'),
-            'image_url': json['url']}
-    return data
-
-
-def creating_epic_data(json: dict) -> dict:
-    """Функция создаёт словарь {'date': , 'image_url': } из входящего JSON."""
-
-    data = {'date': datetime.fromisoformat(json['date']).strftime('%Y-%m-%d'),
-            'image_url': f'https://epic.gsfc.nasa.gov/archive/natural/'
-                         f'{datetime.fromisoformat(json["date"]).strftime("%Y/%m/%d")}'
-                         f'/png/{json["image"]}.png'}
-    return data
-
-
-def creating_spacex_data(json: dict) -> list:
-    """Функция создает список словарей {'date': , 'image_url': } из входящего JSON."""
-
-    data = [{'date': datetime.fromisoformat(json['date_local']).strftime('%Y-%m-%d'),
-             'image_url': elem} for elem in json['links']['flickr']['original']]
-    return data

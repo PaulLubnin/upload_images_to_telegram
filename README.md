@@ -19,9 +19,9 @@ TG_CHAT_ID=<tg_chat_id>
 ```
 python load_apod.py -qa [QUANTITY_APOD]
 ```
-- Для загрузки EPIC, где QUANTITY_EPIC количество фотографий:
+- Для загрузки EPIC:
 ```
-python load_epic.py -qe [QUANTITY_EPIC]
+python load_epic.py
 ```
 - Для загрузки SPACEX, где ID_LAUNCH идентификатор пуска, например `6243adcaaf52800c6e919254`, без идентификатора загружается случайный пуск:
 ```

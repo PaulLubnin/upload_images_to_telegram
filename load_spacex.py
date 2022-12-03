@@ -1,11 +1,20 @@
 import argparse
 import random
+from datetime import datetime
 
 import requests
 
-from boot_scripts import creating_spacex_data, save_image
+from boot_scripts import save_image
 
 API_SPACEX_URL = 'https://api.spacexdata.com/v5/launches/'
+
+
+def creating_spacex_data(json: dict) -> list:
+    """Функция создает список словарей {'date': , 'image_url': } из входящего JSON."""
+
+    data = [{'date': datetime.fromisoformat(json['date_local']).strftime('%Y-%m-%d'),
+             'image_url': elem} for elem in json['links']['flickr']['original']]
+    return data
 
 
 def get_random_launch_id() -> str:

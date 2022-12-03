@@ -1,9 +1,18 @@
 import argparse
+from datetime import datetime
 
 import requests
 from environs import Env
 
-from boot_scripts import creating_apod_data, save_image
+from boot_scripts import save_image
+
+
+def creating_apod_data(json: dict) -> dict:
+    """Функция создаёт словарь {'date': , 'image_url': } из входящего JSON."""
+
+    data = {'date': datetime.fromisoformat(json['date']).strftime('%Y-%m-%d'),
+            'image_url': json['url']}
+    return data
 
 
 def get_nasa_apod_images(nasa_api_key, quantity_apod: int):
